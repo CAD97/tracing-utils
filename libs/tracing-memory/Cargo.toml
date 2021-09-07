@@ -1,0 +1,53 @@
+[package]
+name = "tracing-memory"
+edition = "2018"
+version = "0.0.0"
+
+description = "In-memory history of tracing events"
+
+[dependencies.ahash]
+version = "0.7"
+default-features = false
+features = [ "std" ]
+
+[dependencies.chrono]
+version = "0.4.19"
+features = [ "std" ]
+
+[dependencies.crossbeam-queue]
+version = "0.3.2"
+default-features = false
+features = [ "std" ]
+
+[dependencies.indexmap]
+version = "1.7.0"
+default-features = false
+features = [ "std" ]
+
+[dependencies.once_cell]
+version = "1.8.0"
+default-features = false
+features = [ "std", "parking_lot" ]
+
+[dependencies.parking_lot]
+version = "0.11.2"
+default-features = false
+
+[dependencies.replace_with]
+version = "0.1.7"
+default-features = false
+features = [ "std" ]
+
+[dependencies.smartstring]
+version = "0.2.9"
+default-features = false
+features = [ "std" ]
+
+[dependencies.tracing]
+version = "0.1.26"
+default-features = false
+
+[dependencies.tracing-subscriber]
+version = "0.2.20"
+default-features = false
+features = [ "registry", "chrono", "parking_lot" ]

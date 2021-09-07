@@ -1,0 +1,39 @@
+[package]
+name = "tracing-egui"
+version = "0.0.0"
+edition = "2018"
+
+description = "Display logged tracing events in-app with egui"
+
+[dependencies.egui]
+version = "0.14.2"
+default-features = false
+features = [ "single_threaded" ] # required feature
+
+[dependencies.once_cell]
+version = "1.8.0"
+default-features = false
+features = [ "std" ]
+
+[dependencies.regex]
+version = "1.5.4"
+default-features = false
+features = [ "std", "unicode-case", "unicode-perl" ]
+
+[dependencies.smallvec]
+version = "1.6.1"
+default-features = false
+features = [ "const_generics", "union" ]
+
+[dependencies.smartstring]
+version = "0.2.9"
+default-features = false
+features = [ "std" ]
+
+[dependencies.tracing]
+version = "0.1.26"
+default-features = false
+
+[dependencies.tracing-memory]
+version = "0.0.0"
+path = "../tracing-memory"

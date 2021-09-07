@@ -1,0 +1,25 @@
+[package]
+name = "tracing-utils-demo"
+edition = "2018"
+version = "0.0.0"
+publish = false
+
+[dependencies.color-eyre]
+version = "0.5.11"
+
+[dependencies.tracing]
+version = "0.1.26"
+
+[dependencies.tracing-egui]
+path = "../../libs/tracing-egui"
+
+[dependencies.tracing-memory]
+path = "../../libs/tracing-memory"
+
+[dependencies.tracing-subscriber]
+version = "0.2.20"
+
+[dependencies.eframe]
+version = "0.14.0"
+
+

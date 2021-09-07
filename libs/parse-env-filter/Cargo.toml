@@ -1,0 +1,12 @@
+[package]
+name = "parse-env-filter"
+version = "0.0.0"
+edition = "2018"
+
+[features]
+default = ["alloc"]
+alloc = []
+
+[[test]]
+name = "examples"
+required-features = [ "alloc" ]
