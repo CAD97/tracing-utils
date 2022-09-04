@@ -61,7 +61,7 @@ impl egui::Widget for Widget {
                 EventFilter::default()
             };
 
-            egui::ScrollArea::new([true, false])
+            egui::ScrollArea::new([true, true])
                 .auto_shrink([false, false])
                 .always_show_scroll(true)
                 .show(ui, show_log(filter));
