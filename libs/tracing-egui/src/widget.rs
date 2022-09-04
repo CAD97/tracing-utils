@@ -1,4 +1,5 @@
 use crate::filter::EventFilter;
+use egui::RichText;
 use tracing_memory::{with_events, Event, Field};
 
 #[derive(Debug)]
@@ -25,7 +26,12 @@ struct State {
 impl egui::Widget for Widget {
     fn ui(self, ui: &mut egui::Ui) -> egui::Response {
         let id = ui.make_persistent_id("tracing-egui::LogPanel");
-        let mut state = ui.memory().id_data_temp.get_or_default::<State>(id).clone();
+        // let mut state = ui.memory().id_data_temp.get_or_default::<State>(id).clone();
+        let mut state = ui
+            .memory()
+            .data
+            .get_persisted_mut_or_default::<State>(id)
+            .clone();
 
         let inner = ui.allocate_ui(ui.available_size(), |ui| {
             let filter = if self.filter {
@@ -34,7 +40,7 @@ impl egui::Widget for Widget {
                     ui.add(
                         egui::TextEdit::singleline(&mut state.filters)
                             .hint_text("target[span{field=value}]=level")
-                            .text_style(egui::TextStyle::Monospace),
+                            .font(egui::TextStyle::Monospace),
                     );
                     egui::reset_button(ui, &mut state.filters);
                     match state.filters.parse() {
@@ -55,12 +61,14 @@ impl egui::Widget for Widget {
                 EventFilter::default()
             };
 
-            egui::ScrollArea::auto_sized()
+            egui::ScrollArea::new([true, true])
+                .auto_shrink([false, false])
                 .always_show_scroll(true)
                 .show(ui, show_log(filter));
         });
 
-        ui.memory().id_data_temp.insert(id, state);
+        // ui.memory().id_data_temp.insert(id, state);
+        ui.memory().data.insert_temp(id, state.clone());
         inner.response
     }
 }
@@ -84,13 +92,13 @@ fn show_log(filter: EventFilter) -> impl FnOnce(&mut egui::Ui) {
                     continue;
                 }
                 match event.field("message") {
-                    Some(message) => egui::CollapsingHeader::new(format_args!(
+                    Some(message) => egui::CollapsingHeader::new(format!(
                         "[{}] [{}] {}",
                         event.timestamp().format("%H:%M:%S%.3f"),
                         event.meta().level(),
                         display_field(message),
                     )),
-                    None => egui::CollapsingHeader::new(format_args!(
+                    None => egui::CollapsingHeader::new(format!(
                         "[{}] [{}]",
                         event.timestamp().format("%H:%M:%S%.3f"),
                         event.meta().level(),
@@ -105,24 +113,19 @@ fn show_log(filter: EventFilter) -> impl FnOnce(&mut egui::Ui) {
 
 fn show_event(event: &Event) -> impl '_ + FnOnce(&mut egui::Ui) {
     move |ui: &mut egui::Ui| {
-        egui::CollapsingHeader::new(format_args!(
-            "{} {}",
-            event.meta().target(),
-            event.meta().name(),
-        ))
+        egui::CollapsingHeader::new(
+            RichText::new(format!("{} {}", event.meta().target(), event.meta().name())).monospace(),
+        )
         .id_source(ui.make_persistent_id(0usize))
-        .text_style(egui::TextStyle::Monospace)
         .show(ui, show_fields(event.fields()));
 
         for (span_ix, span) in std::iter::successors(event.span(), |span| span.parent()).enumerate()
         {
-            egui::CollapsingHeader::new(format_args!(
-                "{}::{}",
-                span.meta().target(),
-                span.meta().name(),
-            ))
+            egui::CollapsingHeader::new(
+                RichText::new(format!("{}::{}", span.meta().target(), span.meta().name(),))
+                    .monospace(),
+            )
             .id_source(ui.make_persistent_id(span_ix + 1))
-            .text_style(egui::TextStyle::Monospace)
             .show(ui, show_fields(span.fields()));
         }
     }
@@ -134,7 +137,7 @@ fn show_fields<'a, 'b>(
     move |ui: &mut egui::Ui| {
         for (name, value) in fields {
             value
-                .with_debug(|value| ui.add(egui::Label::new(format_args!("{}: {:?}", name, value))))
+                .with_debug(|value| ui.add(egui::Label::new(format!("{}: {:?}", name, value))))
                 .for_each(drop)
         }
     }
